@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avaliação de Livro ou Equipamento</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Georgia', serif;
+    }
+
+    body {
+      /* Fundo utilizando apenas a foto da biblioteca */
+      background-image: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=1920&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    /* Card Principal */
+    .card-login {
+      background-color: rgba(217, 217, 217, 0.95);
+      backdrop-filter: blur(4px);
+      width: 100%;
+      max-width: 420px;
+      padding: 40px 30px 35px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-login h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #000;
+      margin-bottom: 25px;
+    }
+
+    /* Campos de Entrada */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: #000;
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 1.1rem;
+      border: 1px solid #333;
+      border-radius: 16px;
+      background-color: #ffffff;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #6a55e0;
+      box-shadow: 0 0 0 2px #6a55e0;
+    }
+
+    /* Botões na parte inferior */
+    .botoes-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .btn-entrar {
+      flex: 1;
+      background-color: #6a55e0;
+      color: #ffffff;
+      font-size: 1.15rem;
+      font-weight: bold;
+      padding: 12px 0;
+      border: 1px solid #333;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s;
+    }
+
+    .btn-entrar:hover {
+      background-color: #5743c7;
+    }
+
+    .btn-cadastre {
+      flex: 1.2;
+      background-color: #3b3598;
+      color: #ffffff;
+      font-size: 1.05rem;
+      font-weight: bold;
+      padding: 12px 0;
+      border: 1px solid #333;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      display: inline-block;
+      transition: background-color 0.2s;
+    }
+
+    .btn-cadastre:hover {
+      background-color: #2e2978;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card-login">
+    <h1>Avaliação</h1>
+
+    <form>
+      <div class="form-group">
+        <label for="tipo">Tipo de Item:</label>
+        <select id="tipo" name="tipo" required>
+          <option value="" disabled selected>Selecione...</option>
+          <option value="livro">Livro</option>
+          <option value="equipamento">Equipamento</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="nome">Nome do Item:</label>
+        <input type="text" id="nome" name="nome" placeholder="Ex: Dom Casmurro ou Câmera X" required>
+      </div>
+
+      <div class="form-group">
+        <label for="nota">Nota (1 a 5):</label>
+        <select id="nota" name="nota" required>
+          <option value="" disabled selected>Escolha a nota</option>
+          <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+          <option value="4">⭐⭐⭐⭐ (4/5)</option>
+          <option value="3">⭐⭐⭐ (3/5)</option>
+          <option value="2">⭐⭐ (2/5)</option>
+          <option value="1">⭐ (1/5)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="comentario">Comentário:</label>
+        <textarea id="comentario" name="comentario" placeholder="Escreva sua avaliação aqui..." required></textarea>
+      </div>
+
+<div class="botoes-container">
+  <button type="submit" class="btn-entrar">Enviar</button>
+  <a href="inicio.html" class="btn-cadastre">Cancelar</a>
+</div>
+    </form>
+  </div>
+
+</body>
+</html>

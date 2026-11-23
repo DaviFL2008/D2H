@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biblioteca Digital - Acervo & Gêneros</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Georgia', serif;
+    }
+
+    body {
+      background: linear-gradient(rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.82)), 
+                  url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000&auto=format&fit=crop') no-repeat center center fixed;
+      background-size: cover;
+      padding-bottom: 40px;
+      min-height: 100vh;
+      color: #1e293b;
+    }
+
+    header {
+      background-color: #5DA5D9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      gap: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-icons-left, .header-icons-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      padding: 6px;
+      border-radius: 50%;
+      transition: background-color 0.2s, transform 0.2s;
+    }
+
+    .icon-btn:hover {
+      background-color: rgba(0, 0, 0, 0.12);
+      transform: scale(1.05);
+    }
+
+    .icon-btn svg {
+      width: 28px;
+      height: 28px;
+      fill: #111;
+    }
+
+    .search-bar {
+      flex: 1;
+      max-width: 600px;
+      position: relative;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 10px 16px 10px 42px;
+      border-radius: 20px;
+      border: none;
+      font-size: 1rem;
+      color: #333;
+      outline: none;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
+    }
+
+    .search-bar svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      fill: #666;
+    }
+
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.65);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      z-index: 998;
+    }
+
+    .menu-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .sidebar-menu {
+      position: fixed;
+      top: 0;
+      left: -320px;
+      width: 290px;
+      height: 100vh;
+      background-color: #6c52ee;
+      padding: 25px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: 4px 0 14px rgba(0, 0, 0, 0.5);
+      transition: left 0.3s ease-in-out;
+      z-index: 999;
+      overflow-y: auto;
+    }
+
+    .sidebar-menu.active {
+      left: 0;
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+      font-size: 1.4rem;
+      font-weight: bold;
+      border-bottom: 2px solid rgba(255,255,255,0.2);
+      padding-bottom: 10px;
+    }
+
+    .sidebar-close-btn {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.8rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .sidebar-card {
+      width: 100%;
+      background-color: #f1f5f9;
+      border: 2px solid #000;
+      border-radius: 16px;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sidebar-card-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #000;
+      text-align: center;
+    }
+
+    .sidebar-genre-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .genre-nav-link {
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.92rem;
+      font-weight: bold;
+      color: #334155;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .genre-nav-link:hover {
+      background-color: #e0e7ff;
+      color: #4338ca;
+      transform: translateX(4px);
+    }
+
+    .sidebar-btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .sidebar-btn {
+      width: 100%;
+      padding: 11px 8px;
+      border-radius: 12px;
+      border: 1px solid #000;
+      background-color: #a76bf2;
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      transition: transform 0.15s ease, filter 0.2s ease;
+    }
+
+    .sidebar-btn.blue {
+      background-color: #5ea1d4;
+    }
+
+    .sidebar-btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-2px);
+    }
+
+    .page-section {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .main-container {
+      max-width: 1280px;
+      margin: 25px auto;
+      padding: 0 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .hero-banner {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 35px 30px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+      border: 1px solid #e2e8f0;
+      backdrop-filter: blur(8px);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #0f172a;
+    }
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      color: #475569;
+      max-width: 750px;
+      line-height: 1.6;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .btn-hero {
+      padding: 12px 24px;
+      border-radius: 25px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      border: 1px solid #000;
+      transition: transform 0.2s, filter 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-hero.purple {
+      background-color: #6c52ee;
+      color: #fff;
+    }
+
+    .btn-hero.blue {
+      background-color: #5ea1d4;
+      color: #fff;
+    }
+
+    .btn-hero:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+
+    .genre-filter-pills {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 8px 0;
+      margin-bottom: 20px;
+    }
+
+    .genre-filter-pills::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .pill-btn {
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #334155;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .pill-btn:hover, .pill-btn.active {
+      background-color: #6c52ee;
+      color: #ffffff;
+      border-color: #6c52ee;
+    }
+
+    .section-card {
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 22px 24px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+      position: relative;
+      backdrop-filter: blur(8px);
+      border: 1px solid #e2e8f0;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 1.6rem;
+      font-weight: 900;
+      margin-bottom: 16px;
+      color: #0f172a;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 8px;
+    }
+
+    .section-title-text {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .book-count-badge {
+      font-size: 0.85rem;
+      background: #e2e8f0;
+      color: #475569;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-weight: normal;
+    }
+
+    .carousel-container {
+      display: flex;
+      align-items: center;
+      position: relative;
+      gap: 6px;
+    }
+
+    .carousel-arrow {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid #cbd5e1;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0f172a;
+      user-select: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 2;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .carousel-arrow:hover {
+      background-color: #5DA5D9;
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .carousel-items {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      width: 100%;
+      padding: 12px 4px;
+    }
+
+    .carousel-items::-webkit-scrollbar {
+      height: 6px;
+    }
+    
+    .carousel-items::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    .item-card {
+      background-color: #fff;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      flex: 0 0 185px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .item-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .item-thumb {
+      width: 100%;
+      height: 230px;
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f8fafc;
+      overflow: hidden;
+    }
+
+    .item-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 6px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+      transition: transform 0.3s ease;
+    }
+
+    .item-card:hover .item-thumb img {
+      transform: scale(1.04);
+    }
+
+    .item-info {
+      padding: 10px 8px;
+      width: 100%;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 65px;
+    }
+
+    .item-title {
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: #0f172a;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .item-author {
+      font-size: 0.78rem;
+      color: #64748b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn-voltar {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background-color: #ffffff;
+      color: #0f172a;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      cursor: pointer;
+      border: none;
+      font-size: 0.95rem;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .btn-voltar:hover {
+      transform: translateX(-4px);
+      background-color: #f8fafc;
+    }
+
+    .detail-container {
+      max-width: 920px;
+      margin: 30px auto;
+      padding: 0 15px;
+    }
+
+    .book-detail-card {
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: 20px;
+      padding: 35px;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
+      display: flex;
+      gap: 35px;
+      align-items: flex-start;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(8px);
+    }
+
+    @media (max-width: 700px) {
+      .book-detail-card {
+        flex-direction: column;
+        align-items: center;
+      }
+      .item-card {
+        flex: 0 0 160px;
+      }
+    }
+
+    .book-cover-wrapper {
+      width: 230px;
+      height: 330px;
+      border-radius: 12px;
+      padding: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      background-color: #1e293b;
+    }
+
+    .book-cover-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .book-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .book-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .book-title {
+      font-size: 2rem;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.2;
+    }
+
+    .book-author {
+      font-size: 1.1rem;
+      color: #475569;
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    .badge-genre {
+      display: inline-block;
+      background-color: #e0dcfd;
+      color: #4a38a8;
+      padding: 6px 14px;
+      border-radius: 15px;
+      font-weight: bold;
+      font-size: 0.88rem;
+      width: fit-content;
+    }
+
+    .book-status {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #16a34a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      background-color: #16a34a;
+      border-radius: 50%;
+    }
+
+    .synopsis-box {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 5px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .synopsis-title {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .book-synopsis {
+      line-height: 1.6;
+      color: #334155;
+      font-size: 0.95rem;
+    }
+
+    .detail-actions-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 15px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid #000;
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      transition: transform 0.15s ease, filter 0.2s ease;
+    }
+
+    .action-btn.btn-avaliacao {
+      background-color: #5ea1d4;
+    }
+
+    .action-btn.btn-emprestimo {
+      background-color: #6c52ee;
+    }
+
+    .action-btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-2px);
+    }
+
+    .like-btn {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .like-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: #64748b;
+      transition: fill 0.2s ease, transform 0.2s ease;
+    }
+
+    .like-btn:hover {
+      transform: scale(1.08);
+    }
+
+    .like-btn.liked {
+      background-color: #e11d48;
+      border-color: #e11d48;
+    }
+
+    .like-btn.liked svg {
+      fill: #ffffff;
+    }
+
+    .form-wrapper {
+      max-width: 520px;
+      margin: 30px auto;
+      padding: 0 15px;
+    }
+
+    .form-card-integrated {
+      background-color: rgba(248, 250, 252, 0.97);
+      backdrop-filter: blur(8px);
+      width: 100%;
+      padding: 32px 28px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .form-card-integrated h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 24px;
+    }
+
+    .form-group-custom {
+      margin-bottom: 18px;
+    }
+
+    .form-group-custom label {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #1e293b;
+      margin-bottom: 6px;
+    }
+
+    .form-group-custom input,
+    .form-group-custom select,
+    .form-group-custom textarea {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 0.95rem;
+      border: 1px solid #94a3b8;
+      border-radius: 12px;
+      background-color: #ffffff;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group-custom textarea {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    .form-group-custom input:focus,
+    .form-group-custom select:focus,
+    .form-group-custom textarea:focus {
+      border-color: #6c52ee;
+      box-shadow: 0 0 0 3px rgba(108, 82, 238, 0.25);
+    }
+
+    .botoes-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-top: 25px;
+    }
+
+    .btn-submit-form {
+      flex: 1;
+      background-color: #6c52ee;
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: bold;
+      padding: 12px 0;
+      border: 1px solid #000;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s;
+    }
+
+    .btn-submit-form:hover {
+      background-color: #5743c7;
+    }
+
+    .btn-cancel-form {
+      flex: 1;
+      background-color: #334155;
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: bold;
+      padding: 12px 0;
+      border: 1px solid #000;
+      border-radius: 12px;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color 0.2s;
+    }
+
+    .btn-cancel-form:hover {
+      background-color: #1e293b;
+    }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background-color: #16a34a;
+      color: white;
+      padding: 14px 24px;
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      font-weight: bold;
+      display: none;
+      z-index: 1000;
+      animation: fadeIn 0.3s;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Overlay de fundo escuro para o menu -->
+  <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+
+  <aside class="sidebar-menu" id="sidebarMenu">
+    <div class="sidebar-header">
+      <span>Navegação</span>
+      <button class="sidebar-close-btn" onclick="closeMenu()">&times;</button>
+    </div>
+
+    <!-- Botão Principal de Gêneros Literários -->
+    <div class="sidebar-card">
+      <div class="sidebar-card-title">Explorar Coleção</div>
+      <button class="sidebar-btn" onclick="showPage('generosPage'); closeMenu();">
+        📚 Gêneros Literários
+      </button>
+      <div class="sidebar-genre-list">
+        <a class="genre-nav-link" onclick="irParaGenero('romance')">💕 Romance & Drama <span>&rarr;</span></a>
+        <a class="genre-nav-link" onclick="irParaGenero('ficcao')">🚀 Ficção & Distopia <span>&rarr;</span></a>
+        <a class="genre-nav-link" onclick="irParaGenero('fantasia')">🐉 Fantasia & Épico <span>&rarr;</span></a>
+        <a class="genre-nav-link" onclick="irParaGenero('suspense')">🔍 Suspense & Mistério <span>&rarr;</span></a>
+        <a class="genre-nav-link" onclick="irParaGenero('desenvolvimento')">💡 Não-Ficção <span>&rarr;</span></a>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-card-title">Ações Rápidas</div>
+      <div class="sidebar-btn-group">
+        <button class="sidebar-btn blue" onclick="showPage('homePage'); closeMenu();">Início</button>
+        <button class="sidebar-btn blue" onclick="showPage('equipamentosPage'); closeMenu();">Equipamentos</button>
+        <button class="sidebar-btn blue" onclick="showPage('avaliacaoPage'); closeMenu();">Avaliação</button>
+        <button class="sidebar-btn blue" onclick="showPage('emprestimoPage'); closeMenu();">Cadastrar Livro</button>
+      </div>
+    </div>
+  </aside>
+
+  <header>
+    <div class="header-icons-left">
+      <button class="icon-btn" id="toggleMenuBtn" onclick="toggleMenu()" aria-label="Abrir Menu">
+        <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+      </button>
+      <button class="icon-btn" onclick="showPage('homePage')" aria-label="Página Inicial" title="Início">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      </button>
+    </div>
+
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input type="text" id="searchInput" placeholder="Pesquisar título, autor ou gênero..." oninput="filtrarLivrosGlobal()">
+    </div>
+
+    <div class="header-icons-right">
+      <button class="icon-btn" onclick="showPage('equipamentosPage')" title="Ver Equipamentos" aria-label="Equipamentos">
+        <svg viewBox="0 0 24 24"><path d="M19 8h-1V3H6v5H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zM8 5h8v3H8V5zm8 14H8v-4h8v4zm2-4v-2H6v2H4v-4c0-.55.45-1 1-1h14c.55 0 1 .45 1 1v4h-2z"/></svg>
+      </button>
+      <button class="icon-btn" onclick="showPage('generosPage')" title="Ver Gêneros" aria-label="Gêneros Literários">
+        <svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+      </button>
+      <button class="icon-btn" onclick="showPage('emprestimoPage')" title="Cadastrar Livro" aria-label="Adicionar Livro">
+        <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="homePage" class="page-section active">
+    <div class="main-container">
+
+      <section class="hero-banner">
+        <h1 class="hero-title">Bem-vindo à Biblioteca Digital 📚</h1>
+        <p class="hero-subtitle">
+          Explore um acervo vasto e diversificado de obras clássicas, ficções envolventes, romances inesquecíveis e equipamentos tecnológicos de ponta.
+        </p>
+        <div class="hero-actions">
+          <button class="btn-hero purple" onclick="showPage('generosPage')">Explorar por Gêneros</button>
+          <button class="btn-hero blue" onclick="showPage('equipamentosPage')">Equipamentos 3D</button>
+          <button class="btn-hero blue" onclick="showPage('emprestimoPage')">Cadastrar Nova Obra</button>
+        </div>
+      </section>
+
+      <!-- Destaques Gerais na Home -->
+      <section class="section-card">
+        <div class="section-title">
+          <div class="section-title-text">
+            <span>Destaques da Semana ⭐</span>
+          </div>
+          <span class="book-count-badge">Popular</span>
+        </div>
+        <div class="carousel-container">
+          <button class="carousel-arrow" onclick="scrollCarousel('carousel-destaques', -1)">&lt;</button>
+          <div class="carousel-items" id="carousel-destaques"></div>
+          <button class="carousel-arrow" onclick="scrollCarousel('carousel-destaques', 1)">&gt;</button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- PÁGINA DE EQUIPAMENTOS -->
+  <main id="equipamentosPage" class="page-section">
+    <div class="main-container">
+      
+      <div class="section-card">
+        <div class="section-title">
+          <div class="section-title-text">
+            <span>Equipamentos🖨️💻</span>
+          </div>
+          <button class="btn-voltar" style="margin-bottom:0;" onclick="showPage('homePage')">&larr; Voltar ao Início</button>
+        </div>
+        <p style="color:#64748b; margin-bottom: 15px; font-size: 0.95rem;">
+          Conheça nossas Impressoras 3D e Computadores de alta performance disponíveis no acervo.
+        </p>
+      </div>
+
+      <!-- Seção 1: Impressoras 3D -->
+      <section class="section-card">
+        <div class="section-title">
+          <div class="section-title-text">
+            <span>Impressoras 3D 🖨️</span>
+          </div>
+          <span class="book-count-badge">Equipamentos</span>
+        </div>
+        <div class="carousel-container">
+          <button class="carousel-arrow" onclick="scrollCarousel('carousel-impressoras', -1)">&lt;</button>
+          <div class="carousel-items" id="carousel-impressoras"></div>
+          <button class="carousel-arrow" onclick="scrollCarousel('carousel-impressoras', 1)">&gt;</button>
+        </div>
+      </section>
+
+      <!-- Seção 2: Computadores (PCs) -->
+      <section class="section-card">
+        <div class="section-title">
+          <div class="section-title-text">
+            <span>Computadores (PCs) 💻</span>
+          </div>
+          <span class="book-count-badge">Equipamentos</span>
+        </div>
+        <div class="carousel-container">
+          <button class="carousel-arrow" onclick="scrollCarousel('carousel-pcs', -1)">&lt;</button>
+          <div class="carousel-items" id="carousel-pcs"></div>
+          <button class="carousel-arrow" onclick="scrollCarousel('carousel-pcs', 1)">&gt;</button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- PÁGINA DE GÊNEROS -->
+  <main id="generosPage" class="page-section">
+    <div class="main-container">
+      
+      <div class="section-card">
+        <div class="section-title">
+          <div class="section-title-text">
+            <span>Gêneros Literários 📚</span>
+          </div>
+          <button class="btn-voltar" style="margin-bottom:0;" onclick="showPage('homePage')">&larr; Voltar ao Início</button>
+        </div>
+
+        <p style="color:#64748b; margin-bottom: 15px; font-size: 0.95rem;">
+          Filtre e selecione seu gênero favorito para navegar pelas obras catalogadas:
+        </p>
+
+        <!-- Filtros Rápidos -->
+        <div class="genre-filter-pills">
+          <button class="pill-btn active" onclick="filtrarSecaoGenero('todos', this)">Todos os Gêneros</button>
+          <button class="pill-btn" onclick="filtrarSecaoGenero('romance', this)">💕 Romance & Drama</button>
+          <button class="pill-btn" onclick="filtrarSecaoGenero('ficcao', this)">🚀 Ficção Científica</button>
+          <button class="pill-btn" onclick="filtrarSecaoGenero('fantasia', this)">🐉 Fantasia</button>
+          <button class="pill-btn" onclick="filtrarSecaoGenero('suspense', this)">🔍 Suspense & Mistério</button>
+          <button class="pill-btn" onclick="filtrarSecaoGenero('desenvolvimento', this)">💡 Não-Ficção</button>
+        </div>
+      </div>
+
+      <!-- Gênero 1: Romance & Drama -->
+      <section class="section-card genre-block" id="romance">
+        <div class="section-title">
+          <div class="section-title-text">
+            <span>Romance & Drama 💕</span>
+          </div>
+          <span class="book-count-badge" id="count-romance">Livros</span>
+        </div>
+        <div class="carousel-container">
+          <button class="carousel-arrow" onclick="scrollCarousel('carousel-romance', -1)">&lt;</button>
+          <div class="carousel-items" id="carousel-romance"></div>
+          <button class="carousel-arrow" onclick="scrollCarousel('carousel-romance', 1)">&gt;</button>
+        </div>
+      </section>
+
+      <!-- Gênero 2: Ficção Científica & Distopia -->
+      <section class="section-card genre-block" id="ficcao">
+        <div class="section-title">
+          <div class="section-title-text">
+            <span>Ficção Científica & Distopia 🚀</span>
+          </div>
+          <span class="book-count-badge" id="count-ficcao">Livros</span>
+        </div>
+        <div class="carousel-container">
+          <button class="carousel-arrow" onclick="scrollCarousel('carousel-ficcao', -1)">&lt;</button>
+          <div class="carousel-items" id="carousel-ficcao"></div>
+          <button class="carousel-arrow" onclick="scrollCarousel('carousel-ficcao', 1)">&gt;</button>
+        </div>
+      </section>
+
+      <!-- Gênero 3: Fantasia & Épico -->
+      <section class="section-card genre-block" id="fantasia">
+        <div class="section-title">
+          <div class="section-title-text">
+            <span>Fantasia & Épico 🐉</span>
+          </div>
+          <span class="book-count-badge" id="count-fantasia">Livros</span>
+        </div>
+        <div class="carousel-container">
+          <button class="carousel-arrow" onclick="scrollCarousel('carousel-fantasia', -1)">&lt;</button>
+          <div class="carousel-items" id="carousel-fantasia"></div>
+          <button class="carousel-arrow" onclick="scrollCarousel('carousel-fantasia', 1)">&gt;</button>
+        </div>
+      </section>
+
+      <!-- Gênero 4: Suspense, Terror & Mistério -->
+      <section class="section-card genre-block" id="suspense">
+        <div class="section-title">
+          <div class="section-title-text">
+            <span>Suspense, Terror & Mistério 🔍</span>
+          </div>
+          <span class="book-count-badge" id="count-suspense">Livros</span>
+        </div>
+        <div class="carousel-container">
+          <button class="carousel-arrow" onclick="scrollCarousel('carousel-suspense', -1)">&lt;</button>
+          <div class="carousel-items" id="carousel-suspense"></div>
+          <button class="carousel-arrow" onclick="scrollCarousel('carousel-suspense', 1)">&gt;</button>
+        </div>
+      </section>
+
+      <!-- Gênero 5: Desenvolvimento & Não-Ficção -->
+      <section class="section-card genre-block" id="desenvolvimento">
+        <div class="section-title">
+          <div class="section-title-text">
+            <span>Desenvolvimento & Não-Ficção 💡</span>
+          </div>
+          <span class="book-count-badge" id="count-desenvolvimento">Livros</span>
+        </div>
+        <div class="carousel-container">
+          <button class="carousel-arrow" onclick="scrollCarousel('carousel-desenvolvimento', -1)">&lt;</button>
+          <div class="carousel-items" id="carousel-desenvolvimento"></div>
+          <button class="carousel-arrow" onclick="scrollCarousel('carousel-desenvolvimento', 1)">&gt;</button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- PÁGINA DE DETALHES -->
+  <main id="detailsPage" class="page-section">
+    <div class="detail-container">
+      
+      <button class="btn-voltar" onclick="showPage('generosPage')">
+        &larr; Voltar
+      </button>
+
+      <div class="book-detail-card">
+        <div class="book-cover-wrapper" id="coverWrapper">
+          <img id="itemImage" src="" alt="Capa">
+        </div>
+
+        <div class="book-info">
+          <div class="book-header">
+            <div>
+              <h1 class="book-title" id="itemTitle">Título</h1>
+              <div class="book-author" id="itemSub">Detalhes</div>
+            </div>
+
+            <button class="like-btn" id="likeBtn" onclick="toggleLike()" title="Favoritar">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </button>
+          </div>
+
+          <span class="badge-genre" id="itemCategory">Gênero</span>
+
+          <div class="book-status">
+            <span class="status-dot"></span> Disponível no Acervo
+          </div>
+
+          <div class="synopsis-box">
+            <div class="synopsis-title">Descrição / Sinopse:</div>
+            <p class="book-synopsis" id="itemSynopsis">
+              Carregando informações...
+            </p>
+          </div>
+
+          <div class="detail-actions-group">
+            <button class="action-btn btn-avaliacao" onclick="showPage('avaliacaoPage')">Avaliar</button>
+            <button class="action-btn btn-emprestimo" onclick="showPage('emprestimoPage')">Cadastrar Novo</button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- PÁGINA DE AVALIAÇÃO -->
+  <main id="avaliacaoPage" class="page-section">
+    <div class="form-wrapper">
+      <button class="btn-voltar" onclick="showPage('homePage')">&larr; Voltar para o Início</button>
+      
+      <div class="form-card-integrated">
+        <h1>Avaliar Obra</h1>
+        <form onsubmit="salvarFormulario(event, 'Avaliação enviada com sucesso!')">
+          <div class="form-group-custom">
+            <label>Seu Nome</label>
+            <input type="text" required placeholder="Digite seu nome">
+          </div>
+          <div class="form-group-custom">
+            <label>Sua Nota (1 a 5)</label>
+            <select required>
+              <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+              <option value="4">⭐⭐⭐⭐ (4/5)</option>
+              <option value="3">⭐⭐⭐ (3/5)</option>
+              <option value="2">⭐⭐ (2/5)</option>
+              <option value="1">⭐ (1/5)</option>
+            </select>
+          </div>
+          <div class="form-group-custom">
+            <label>Comentário / Opinião</label>
+            <textarea required placeholder="Escreva o que achou da obra..."></textarea>
+          </div>
+          <div class="botoes-container">
+            <button type="button" class="btn-cancel-form" onclick="showPage('homePage')">Cancelar</button>
+            <button type="submit" class="btn-submit-form">Enviar Avaliação</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- PÁGINA DE CADASTRO -->
+  <main id="emprestimoPage" class="page-section">
+    <div class="form-wrapper">
+      <button class="btn-voltar" onclick="showPage('homePage')">&larr; Voltar para o Início</button>
+      
+      <div class="form-card-integrated">
+        <h1>Cadastrar Novo Item</h1>
+        <form onsubmit="cadastrarNovoItem(event)">
+          <div class="form-group-custom">
+            <label>Título / Nome do Item</label>
+            <input type="text" id="novoTitulo" required placeholder="Ex: Orgulho e Preconceito">
+          </div>
+          <div class="form-group-custom">
+            <label>Autor / Modelo</label>
+            <input type="text" id="novoAutor" required placeholder="Ex: Jane Austen">
+          </div>
+          <div class="form-group-custom">
+            <label>Categoria / Gênero</label>
+            <select id="novaCategoria" required>
+              <option value="romance">Romance & Drama</option>
+              <option value="ficcao">Ficção Científica</option>
+              <option value="fantasia">Fantasia</option>
+              <option value="suspense">Suspense & Mistério</option>
+              <option value="desenvolvimento"> Não-Ficção</option>
+              <option value="impressoras">Impressora 3D</option>
+              <option value="pcs">Computador / PC</option>
+            </select>
+          </div>
+          <div class="form-group-custom">
+            <label>URL da Foto (Link da Imagem)</label>
+            <input type="url" id="novaImagem" required placeholder="https://exemplo.com/imagem.jpg">
+          </div>
+          <div class="form-group-custom">
+            <label>Sinopse / Descrição</label>
+            <textarea id="novaSinopse" required placeholder="Descrição do item..."></textarea>
+          </div>
+          <div class="botoes-container">
+            <button type="button" class="btn-cancel-form" onclick="showPage('homePage')">Cancelar</button>
+            <button type="submit" class="btn-submit-form">Cadastrar Item</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast-msg" id="toastMsg">Operação realizada com sucesso!</div>
+
+  <script>
+ // DADOS DE EXEMPLO COM IMAGENS REAIS EXPANDIDOS
+const acervo = [
+  // ROMANCE
+  { id: 1, titulo: "Orgulho e Preconceito", autor: "Jane Austen", genero: "romance", imagem: "https://covers.openlibrary.org/b/id/8225266-L.jpg", sinopse: "Uma clássica história de amor, preconceitos sociais e descobertas pessoais no século XIX." },
+  { id: 2, titulo: "Dom Casmurro", autor: "Machado de Assis", genero: "romance", imagem: "https://covers.openlibrary.org/b/id/15231557-L.jpg", sinopse: "O misterioso ciúme de Bentinho e a inesquecível personagem Capitu com seus olhos de ressaca." },
+  { id: 12, titulo: "Razão e Sensibilidade", autor: "Jane Austen", genero: "romance", imagem: "https://ia800100.us.archive.org/view_archive.php?archive=/5/items/l_covers_0012/l_covers_0012_37.zip&file=0012372639-L.jpg", sinopse: "As desventuras amorosas de duas irmãs com personalidades opostas na Inglaterra do século XIX." },
+  { id: 13, titulo: "O Morro dos Ventos Uivantes", autor: "Emily Brontë", genero: "romance", imagem: "https://covers.openlibrary.org/b/id/15235403-L.jpg", sinopse: "Uma paixão avassaladora e obsessiva entre Heathcliff e Catherine nas terras geladas de Yorkshire." },
+  { id: 14, titulo: "A Culpa é das Estrelas", autor: "John Green", genero: "romance", imagem: "https://covers.openlibrary.org/b/id/15227482-L.jpg", sinopse: "A emocionante história de Hazel e Augustus, dois adolescentes que se conhecem em um grupo de apoio." },
+  { id: 29, titulo: "Como Eu Era Antes de Você", autor: "Jojo Moyes", genero: "romance", imagem: "https://ia600100.us.archive.org/view_archive.php?archive=/5/items/l_covers_0012/l_covers_0012_38.zip&file=0012388031-L.jpg", sinopse: "Uma relação transforma a vida de uma jovem alegre e de um homem amargurado por um acidente." },
+  // FICÇÃO
+  { id: 3, titulo: "1984", autor: "George Orwell", genero: "ficcao", imagem: "https://covers.openlibrary.org/b/id/7222246-L.jpg", sinopse: "Um futuro distópico controlado pela vigilância contínua do Grande Irmão." },
+  { id: 4, titulo: "Duna", autor: "Frank Herbert", genero: "ficcao", imagem: "https://covers.openlibrary.org/b/id/15228531-L.jpg", sinopse: "A jornada épica de Paul Atreides no planeta desértico de Arrakis." },
+  { id: 15, titulo: "Fahrenheit 451", autor: "Ray Bradbury", genero: "ficcao", imagem: "https://ia600505.us.archive.org/view_archive.php?archive=/35/items/l_covers_0014/l_covers_0014_41.zip&file=0014414405-L.jpg", sinopse: "Em um futuro onde os livros são proibidos, bombeiros têm a missão de queimá-los." },
+  { id: 16, titulo: "Admirável Mundo Novo", autor: "Aldous Huxley", genero: "ficcao", imagem: "https://covers.openlibrary.org/b/id/15111340-M.jpg", sinopse: "Uma sociedade futurista biologicamente programada e condicionada para a eficiência." },
+  { id: 17, titulo: "Neuromancer", autor: "William Gibson", genero: "ficcao", imagem: "https://ia801909.us.archive.org/view_archive.php?archive=/31/items/l_covers_0013/l_covers_0013_38.zip&file=0013382841-L.jpg", sinopse: "O romance clássico do cyberpunk que definiu o conceito de ciberespaço." },
+  { id: 30, titulo: "Fundação", autor: "Isaac Asimov", genero: "ficcao", imagem: "https://covers.openlibrary.org/b/id/15132653-M.jpg", sinopse: "A tentativa de preservar o conhecimento humano diante da queda iminente do Império Galáctico." },
+
+  // FANTASIA
+  { id: 5, titulo: "O Hobbit", autor: "J.R.R. Tolkien", genero: "fantasia", imagem: "https://covers.openlibrary.org/b/id/6979861-L.jpg", sinopse: "Bilbo Bolseiro embarca em uma aventura para recuperar o reino dos anões." },
+  { id: 6, titulo: "O Nome do Vento", autor: "Patrick Rothfuss", genero: "fantasia", imagem: "https://ia801909.us.archive.org/view_archive.php?archive=/31/items/l_covers_0013/l_covers_0013_23.zip&file=0013234856-L.jpg", sinopse: "A infância e juventude de Kvothe, um jovem prodígio da música e da magia." },
+  { id: 18, titulo: "O Senhor dos Anéis: A Sociedade do Anel", autor: "J.R.R. Tolkien", genero: "fantasia", imagem: "https://covers.openlibrary.org/b/id/15120679-L.jpg", sinopse: "Frodo Bolseiro assume a missão de destruir o Um Anel nas chamas da Montanha da Perdição." },
+  { id: 19, titulo: "Harry Potter e a Pedra Filosofal", autor: "J.K. Rowling", genero: "fantasia", imagem: "https://covers.openlibrary.org/b/id/10521270-L.jpg", sinopse: "Um garoto órfão descobre no seu aniversário de 11 anos que é um bruxo." },
+  { id: 20, titulo: "A Guerra dos Tronos", autor: "George R.R. Martin", genero: "fantasia", imagem: "https://ia601807.us.archive.org/view_archive.php?archive=/10/items/olcovers707/olcovers707-L.zip&file=7079752-L.jpg", sinopse: "Famílias nobres lutam pelo controle do Trono de Ferro no continente de Westeros." },
+  { id: 31, titulo: "O Feiticeiro de Terramar", autor: "Ursula K. Le Guin", genero: "fantasia", imagem: "https://ia800505.us.archive.org/view_archive.php?archive=/35/items/l_covers_0014/l_covers_0014_36.zip&file=0014360727-L.jpg", sinopse: "O aprendizado de Ged, um jovem que acidentalmente solta uma sombra aterrorizante no mundo." },
+
+  // SUSPENSE
+  { id: 7, titulo: "E Não Sobrou Nenhum", autor: "Agatha Christie", genero: "suspense", imagem: "https://covers.openlibrary.org/b/id/8235118-L.jpg", sinopse: "Dez estranhos são convidados para uma ilha isolada e começam a morrer um por um." },
+  { id: 8, titulo: "O Iluminado", autor: "Stephen King", genero: "suspense", imagem: "https://covers.openlibrary.org/b/id/8231991-L.jpg", sinopse: "Jack Torrance aceita cuidar de um hotel isolado durante o inverno, desencadeando forças sombrias." },
+  { id: 21, titulo: "A Garota no Trem", autor: "Paula Hawkins", genero: "suspense", imagem: "https://covers.openlibrary.org/b/id/8118000-L.jpg", sinopse: "Rachel observa uma casa da janela do trem todos os dias, até presenciar algo chocante." },
+  { id: 22, titulo: "O Código Da Vinci", autor: "Dan Brown", genero: "suspense", imagem: "https://covers.openlibrary.org/b/id/8231820-L.jpg", sinopse: "Um assassinato no Museu do Louvre revela uma conspiração religiosa secular." },
+  { id: 23, titulo: "O Silêncio dos Inocentes", autor: "Thomas Harris", genero: "suspense", imagem: "https://covers.openlibrary.org/b/id/8235280-L.jpg", sinopse: "Uma jovem agente do FBI precisa da ajuda de um brilhante psiquiatra canibal para capturar um serial killer." },
+  { id: 32, titulo: "Garota Exemplar", autor: "Gillian Flynn", genero: "suspense", imagem: "https://covers.openlibrary.org/b/id/8231888-L.jpg", sinopse: "No dia do quinto aniversário de casamento, Amy desaparece e seu marido torna-se o principal suspeito." },
+
+ // DESENVOLVIMENTO (6 itens)
+  { id: 9, titulo: "Hábitos Atômicos", autor: "James Clear", genero: "desenvolvimento", imagem: "https://covers.openlibrary.org/b/id/15087154-M.jpg", sinopse: "Pequenas mudanças que geram resultados extraordinários na sua vida diária." },
+  { id: 24, titulo: "O Poder do Hábito", autor: "Charles Duhigg", genero: "desenvolvimento", imagem: "https://ia601601.us.archive.org/view_archive.php?archive=/25/items/m_covers_0014/m_covers_0014_62.zip&file=0014621911-M.jpg", sinopse: "Entenda como os hábitos funcionam e como transformá-los em negócios e na vida." },
+  { id: 25, titulo: "Pense e Enriqueça", autor: "Napoleon Hill", genero: "desenvolvimento", imagem: "https://ia803200.us.archive.org/view_archive.php?archive=/23/items/m_covers_0009/m_covers_0009_38.zip&file=0009380637-M.jpg", sinopse: "Os segredos de sucesso financeiro e pessoal dos homens mais ricos de sua época." },
+  { id: 26, titulo: "A Coragem de Ser Imperfeito", autor: "Brené Brown", genero: "desenvolvimento", imagem: "https://ia800502.us.archive.org/view_archive.php?archive=/31/items/m_covers_0013/m_covers_0013_52.zip&file=0013527131-M.jpg", sinopse: "Como aceitar a própria vulnerabilidade para viver com ousadia e autencidade." },
+  { id: 33, titulo: "Mindset: A Nova Psicologia do Sucesso", autor: "Carol S. Dweck", genero: "desenvolvimento", imagem: "https://ia600703.us.archive.org/view_archive.php?archive=/4/items/m_covers_0008/m_covers_0008_57.zip&file=0008571819-M.jpg", sinopse: "Como a atitude mental com que encaramos a vida define o nosso sucesso pessoal e profissional." },
+  { id: 34, titulo: "Essencialismo", autor: "Greg McKeown", genero: "desenvolvimento", imagem: "https://ia600505.us.archive.org/view_archive.php?archive=/25/items/m_covers_0010/m_covers_0010_40.zip&file=0010401970-M.jpg", sinopse: "A busca disciplinada por menos: aprenda a focar apenas no que é realmente fundamental." },
+
+// EQUIPAMENTOS (IMPRESSORAS)
+{ id: 10, titulo: "Impressora 3D", autor: "MakerBot", genero: "impressoras", imagem: "https://s2-techtudo.glbimg.com/xC9uEmTqhdhN0g8aaET-KjVfv4I=/0x0:695x463/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2021/b/9/o2urDESLeQD5HaCUnvGA/2015-08-03-makerbot.png", sinopse: "Impressora 3D FDM de alta precisão ideal para prototipagem de modelos plásticos." },
+
+{ id: 27, titulo: "Impressora 3D", autor: "Elegoo", genero: "impressoras", imagem: "https://cdn.awsli.com.br/2500x2500/1923/1923652/produto/336648704/neptune-4-pro--6--68lr64s6rw.png", sinopse: "Impressora 3D de alta resolução para detalhes extremamente finos." },
+
+{ id: 35, titulo: "Impressora 3D", autor: "Industrial", genero: "impressoras", imagem: "https://cdn.awsli.com.br/567/567324/produto/276059553/0045212_600-y225gm4kss.png", sinopse: "Impressora 3D industrial de alta velocidade com suporte a múltiplos materiais." },
+
+// EQUIPAMENTOS (PCS)
+{ id: 11, titulo: "Dell OptiPlex", autor: "Dell", genero: "pcs", imagem: "https://images.unsplash.com/photo-1593642532744-d377ab507dc8?q=80&w=600&auto=format&fit=crop", sinopse: "Computador de alta performance para modelagem 3D, simulação e renderização." },
+
+{ id: 28, titulo: "Mac Studio M2 Max", autor: "Apple", genero: "pcs", imagem: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?q=80&w=600&auto=format&fit=crop", sinopse: "Desempenho compacto extremo para profissionais de design, vídeo e animação." },
+
+{ id: 36, titulo: "ROG Strix G16", autor: "ASUS", genero: "pcs", imagem: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?q=80&w=600&auto=format&fit=crop", sinopse: "Notebook gamer e de processamento pesado com placa de vídeo RTX de última geração." }
+];
+
+    // RENDERIZAR OS CARROSSÉIS
+    function carregarAcervo() {
+      const categorias = ['destaques', 'romance', 'ficcao', 'fantasia', 'suspense', 'desenvolvimento', 'impressoras', 'pcs'];
+      
+      categorias.forEach(cat => {
+        const container = document.getElementById(`carousel-${cat}`);
+        if (!container) return;
+
+        container.innerHTML = '';
+        
+        let itensFiltrados = cat === 'destaques' 
+          ? acervo 
+          : acervo.filter(item => item.genero === cat);
+
+        itensFiltrados.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'item-card';
+          card.onclick = () => abrirDetalhes(item);
+
+          card.innerHTML = `
+            <div class="item-thumb">
+              <img src="${item.imagem}" alt="${item.titulo}" onerror="this.src='https://via.placeholder.com/185x230?text=Sem+Foto'">
+            </div>
+            <div class="item-info">
+              <div class="item-title">${item.titulo}</div>
+              <div class="item-author">${item.autor}</div>
+            </div>
+          `;
+
+          container.appendChild(card);
+        });
+
+        // Atualiza badge de quantidade
+        const countBadge = document.getElementById(`count-${cat}`);
+        if (countBadge) countBadge.innerText = `${itensFiltrados.length} itens`;
+      });
+    }
+
+    // NAVEGAÇÃO DE PÁGINAS
+    function showPage(pageId) {
+      document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+      const target = document.getElementById(pageId);
+      if (target) target.classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    // ABRIR DETALHES DE UM ITEM
+    function abrirDetalhes(item) {
+      itemAtual = item;
+      document.getElementById('itemTitle').innerText = item.titulo;
+      document.getElementById('itemSub').innerText = item.autor;
+      document.getElementById('itemCategory').innerText = item.genero.toUpperCase();
+      document.getElementById('itemSynopsis').innerText = item.sinopse;
+      document.getElementById('itemImage').src = item.imagem;
+
+      showPage('detailsPage');
+    }
+
+    // ROLAGEM DO CARROSSEL DE FOTOS
+    function scrollCarousel(id, direction) {
+      const container = document.getElementById(id);
+      if (container) {
+        container.scrollBy({ left: direction * 220, behavior: 'smooth' });
+      }
+    }
+
+    // CONTROLE DO MENU SIDEBAR
+    function toggleMenu() {
+      document.getElementById('sidebarMenu').classList.toggle('active');
+      document.getElementById('menuOverlay').classList.toggle('active');
+    }
+
+    function closeMenu() {
+      document.getElementById('sidebarMenu').classList.remove('active');
+      document.getElementById('menuOverlay').classList.remove('active');
+    }
+
+    // FILTRO DE CATEGORIAS
+    function filtrarSecaoGenero(genero, btn) {
+      document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.querySelectorAll('.genre-block').forEach(block => {
+        if (genero === 'todos' || block.id === genero) {
+          block.style.display = 'block';
+        } else {
+          block.style.display = 'none';
+        }
+      });
+    }
+
+    function irParaGenero(id) {
+      showPage('generosPage');
+      const target = document.getElementById(id);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+      closeMenu();
+    }
+
+    // CADASTRO DE NOVO ITEM
+    function cadastrarNovoItem(e) {
+      e.preventDefault();
+      const novo = {
+        id: Date.now(),
+        titulo: document.getElementById('novoTitulo').value,
+        autor: document.getElementById('novoAutor').value,
+        genero: document.getElementById('novaCategoria').value,
+        imagem: document.getElementById('novaImagem').value,
+        sinopse: document.getElementById('novaSinopse').value
+      };
+
+      acervo.push(novo);
+      carregarAcervo();
+      mostrarToast("Novo item cadastrado!");
+      e.target.reset();
+      showPage('homePage');
+    }
+
+    function salvarFormulario(e, msg) {
+      e.preventDefault();
+      mostrarToast(msg);
+      showPage('homePage');
+    }
+
+    function toggleLike() {
+      document.getElementById('likeBtn').classList.toggle('liked');
+    }
+
+    function mostrarToast(texto) {
+      const toast = document.getElementById('toastMsg');
+      toast.innerText = texto;
+      toast.style.display = 'block';
+      setTimeout(() => toast.style.display = 'none', 3000);
+    }
+
+    // INICIALIZAR
+    window.onload = carregarAcervo;
+  </script>
+</body>
+</html>

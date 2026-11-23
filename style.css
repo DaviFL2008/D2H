@@ -1,0 +1,63 @@
+/* Reset básico para remover margens padrão */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Configuração do fundo e da tipografia da página */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Estilização e alinhamento das imagens */
+#img1, #img2 {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo do título principal */
+h1 {
+    color: #2c3e50;
+    margin: 20px 0 10px 0;
+    text-align: center;
+    font-size: 2.2rem;
+}
+
+/* Estilo do parágrafo de texto */
+p {
+    max-width: 800px;
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    text-align: justify;
+    white-space: pre-line; /* Mantém as quebras de linha que você colocou no HTML */
+}
+
+.btn-proximo {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: #635DD9; /* Roxo principal da paleta */
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 8px;
+  border: 1px solid #000000;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-proximo:hover {
+  background-color: #8C5DD9; /* Tom mais claro para o efeito hover */
+  transform: translateY(-2px);
+}

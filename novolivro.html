@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Novo Livro</title>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Georgia', 'Times New Roman', serif;
+    }
+
+    body {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    /* Imagem de Fundo de Livro com Zoom Animado */
+    .bg-animated {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1920&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      z-index: -2;
+      animation: zoomBg 18s infinite alternate ease-in-out;
+    }
+
+    /* Camada escura sobre a imagem */
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: -1;
+    }
+
+    @keyframes zoomBg {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.12); }
+    }
+
+    /* CARD PRINCIPAL */
+    .form-card {
+      background-color: rgba(217, 217, 217, 0.92);
+      backdrop-filter: blur(8px);
+      width: 100%;
+      max-width: 420px;
+      padding: 32px 28px;
+      border-radius: 20px;
+      position: relative;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .title {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #000000;
+      margin-bottom: 24px;
+    }
+
+    /* CAMPOS DO FORMULÁRIO */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #1a1a1a;
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      height: 44px;
+      padding: 8px 18px;
+      border: 1px solid #333333;
+      border-radius: 22px;
+      background-color: #FFFFFF;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    /* Estilização para o input de arquivo */
+    input[type="file"].form-control {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    input[type="file"]::file-selector-button {
+      background-color: #7162f8;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 4px 12px;
+      margin-right: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.2s;
+    }
+
+    input[type="file"]::file-selector-button:hover {
+      background-color: #5d4ce0;
+    }
+
+    .form-control:focus {
+      border-color: #7162f8;
+      box-shadow: 0 0 0 2px #7162f8;
+    }
+
+    /* PRÉ-VISUALIZAÇÃO DA FOTO */
+    .preview-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .preview-img {
+      max-width: 100px;
+      max-height: 120px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      object-fit: cover;
+      display: none;
+    }
+
+    /* BOTÃO CADASTRAR */
+    .btn-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 24px;
+    }
+
+    .btn-cadastrar {
+      background-color: #7162f8;
+      color: #FFFFFF;
+      font-size: 1.3rem;
+      font-weight: bold;
+      padding: 10px 32px;
+      border: 1px solid #333333;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.2s;
+    }
+
+    .btn-cadastrar:hover {
+      background-color: #5d4ce0;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fundo Temático Animado -->
+  <div class="bg-animated"></div>
+  <div class="overlay"></div>
+
+  <div class="form-card">
+    <h1 class="title">Novo Livro</h1>
+
+    <form id="livroForm" onsubmit="cadastrarLivro(event)">
+      <!-- Campo de Foto Atualizado -->
+      <div class="form-group">
+        <label for="foto">Selecione uma foto:</label>
+        <input type="file" id="foto" name="foto" accept="image/*" class="form-control" onchange="previewImagem(event)">
+        
+        <!-- Área para exibir a foto selecionada -->
+        <div class="preview-container">
+          <img id="imgPreview" class="preview-img" alt="Pré-visualização da Capa">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" class="form-control" required>
+      </div>
+
+      <div class="form-group">
+        <label for="sinopse">Sinopse:</label>
+        <input type="text" id="sinopse" name="sinopse" class="form-control" required>
+      </div>
+
+      <div class="form-group">
+        <label for="genero">Genero:</label>
+        <input type="text" id="genero" name="genero" class="form-control" required>
+      </div>
+
+      <div class="form-group">
+        <label for="classificacao">Classificação:</label>
+        <input type="text" id="classificacao" name="classificacao" class="form-control" required>
+      </div>
+
+      <div class="btn-container">
+        <button type="submit" class="btn-cadastrar">Cadastrar</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Função para mostrar a imagem selecionada na tela
+    function previewImagem(event) {
+      const input = event.target;
+      const preview = document.getElementById('imgPreview');
+
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          preview.src = e.target.result;
+          preview.style.display = 'block';
+        }
+        
+        reader.readAsDataURL(input.files[0]);
+      } else {
+        preview.src = '';
+        preview.style.display = 'none';
+      }
+    }
+
+    function cadastrarLivro(event) {
+      event.preventDefault();
+      alert("Livro cadastrado com sucesso!");
+      document.getElementById('livroForm').reset();
+      document.getElementById('imgPreview').style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>
